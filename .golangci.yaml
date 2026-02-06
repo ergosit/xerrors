@@ -608,7 +608,7 @@ formatters:
       # A list of prefixes, which, if set, checks import paths with the given
       # prefixes are grouped after 3rd-party packages.
       local-prefixes:
-        - github.com/ergosit/errors
+        - github.com/ergosit/xerrors
 
     golines:
       # Target maximum line length.
