@@ -14,34 +14,50 @@ import (
 	"github.com/ergosit/xerrors"
 )
 
+const errMsg = "some error"
+
 func Test_Must(t *testing.T) {
 	t.Run("no panic", func(t *testing.T) {
 		require.NotPanics(t, func() {
 			t.Helper()
+			xerrors.Must(nil)
+		})
+	})
+
+	t.Run("panic", func(t *testing.T) {
+		require.PanicsWithError(t, errMsg, func() {
+			t.Helper()
+			xerrors.Must(errors.New(errMsg))
+		})
+	})
+}
+
+func Test_Must2(t *testing.T) {
+	t.Run("no panic", func(t *testing.T) {
+		require.NotPanics(t, func() {
+			t.Helper()
 			val := rand.Int()
-			assert.Equal(t, val, xerrors.Must(val, nil))
+			assert.Equal(t, val, xerrors.Must2(val, nil))
 		})
 
 		wrappedNoError := func(val int) (int, error) { return val, nil }
 		require.NotPanics(t, func() {
 			t.Helper()
 			val := rand.Int()
-			assert.Equal(t, val, xerrors.Must(wrappedNoError(val)))
+			assert.Equal(t, val, xerrors.Must2(wrappedNoError(val)))
 		})
 	})
 
 	t.Run("panic", func(t *testing.T) {
-		const errMsg = "some error"
-
 		require.PanicsWithError(t, errMsg, func() {
 			val := rand.Int()
-			_ = xerrors.Must(val, errors.New(errMsg))
+			_ = xerrors.Must2(val, errors.New(errMsg))
 		})
 
 		wrappedWithError := func(val int) (int, error) { return val, errors.New(errMsg) }
 		require.PanicsWithError(t, errMsg, func() {
 			val := rand.Int()
-			_ = xerrors.Must(wrappedWithError(val))
+			_ = xerrors.Must2(wrappedWithError(val))
 		})
 	})
 }
